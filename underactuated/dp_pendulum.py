@@ -16,13 +16,12 @@ X2_RANGE_MAX = 5
 U_RANGE_MIN = -1
 U_RANGE_MAX = 1
 
-X1_NUM_BINS = 501
-X2_NUM_BINS = 501
+X1_NUM_BINS = 301
+X2_NUM_BINS = 301
 U_NUM_BINS = 11
 X1_BINS = np.linspace(X1_RANGE_MIN, X1_RANGE_MAX, num=X1_NUM_BINS)
 X2_BINS = np.linspace(X2_RANGE_MIN, X2_RANGE_MAX, num=X2_NUM_BINS)
-# U_BINS = np.linspace(U_RANGE_MIN, U_RANGE_MAX, num=U_NUM_BINS)
-U_BINS = [U_RANGE_MIN, U_RANGE_MAX]
+U_BINS = np.linspace(U_RANGE_MIN, U_RANGE_MAX, num=U_NUM_BINS)
 
 def get_closest_grid_idx(x1, x2):
     # return the idx of the continous value (meant mostly for goal)
