@@ -11,8 +11,8 @@ X2_RANGE_MAX = 10
 U_RANGE_MIN = -1
 U_RANGE_MAX = 1
 
-X1_NUM_BINS = 101
-X2_NUM_BINS = 101
+X1_NUM_BINS = 301
+X2_NUM_BINS = 301
 U_NUM_BINS = 9
 X1_BINS = np.linspace(X1_RANGE_MIN, X1_RANGE_MAX, num=X1_NUM_BINS)
 X2_BINS = np.linspace(X2_RANGE_MIN, X2_RANGE_MAX, num=X2_NUM_BINS)
@@ -23,7 +23,7 @@ def get_closest_grid_idx(x1, x2):
     # return the idx of the continous value (meant mostly for goal)
     return np.array([np.argmin(np.abs(X1_BINS - x1)), np.argmin(np.abs(X2_BINS - x2))])
 
-def dynamics_next_state(x1, x2, u, dt=.5):
+def dynamics_next_state(x1, x2, u, dt=.1):
     # Takes in current state and u and returns what x_n+1 is
     x1_next = x1 + x2*dt
     x2_next = x2 + u *dt
@@ -119,6 +119,51 @@ if __name__ == '__main__':
     plt.ylabel('X2')
     plt.title('Optimal Control')
     plt.show()
+
+    # Trajectory rollout
+    dt = 0.1
+    time_horizon = 10
+    steps = int(time_horizon / dt)
+    x1, x2 = -8, 0
+    trajectory = []
+    controls = []
+
+    for _ in range(steps):
+        x1_idx, x2_idx = get_closest_grid_idx(x1, x2)
+        u = U_OPT[x1_idx, x2_idx]
+        trajectory.append([x1, x2])
+        controls.append(u)
+        x1, x2 = dynamics_next_state(x1, x2, u, dt)
+
+    trajectory = np.array(trajectory)
+    times = np.linspace(0, time_horizon, steps)
+    
+    # Plot results
+    plt.figure(figsize=(12, 4))
+    plt.subplot(1, 3, 1)
+    plt.plot(times, trajectory[:, 0], label='Angle (rad)')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Angle (rad)')
+    plt.title('Angle vs Time')
+    plt.legend()
+    
+    plt.subplot(1, 3, 2)
+    plt.plot(times, controls, label='Control Input')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Control Torque (Nm)')
+    plt.title('Control Input vs Time')
+    plt.legend()
+    
+    plt.subplot(1, 3, 3)
+    plt.plot(trajectory[:, 0], trajectory[:, 1], label='Phase Plot')
+    plt.xlabel('Angle (rad)')
+    plt.ylabel('Angular Velocity (rad/s)')
+    plt.title('Angle vs Angular Velocity')
+    plt.legend()
+    
+    plt.tight_layout()
+    plt.show()
+
 
 
 
